@@ -3,226 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt lịch khám & Thanh toán - Lộc Khang Clinic</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏥</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Đăng Nhập - Phòng Khám Lộc Khang</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #007bff; text-align: center; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #218838; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2 text-2xl font-bold text-teal-700"><span>🏥</span> <span>Lộc Khang Clinic</span></a>
-            <div class="hidden md:flex items-center space-x-8 font-medium">
-                <a href="/" class="text-slate-600 hover:text-teal-700">Trang chủ</a>
-                <a href="/doctors" class="text-slate-600 hover:text-teal-700">Đội ngũ Giáo sư - Bác sĩ</a>
-                <a href="/diseases" class="text-slate-600 hover:text-teal-700">Tra cứu Bệnh lý</a>
-                <a href="/booking" class="text-teal-700 border-b-2 border-teal-700 pb-1">Đặt lịch khám</a>
-            </div>
-            <a href="/admin" class="text-sm font-semibold text-teal-700 hover:underline">Lịch hẹn của tôi</a>
+<body>
+
+<div class="login-card">
+    <h2>Đăng Nhập Hệ Thống</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Email đăng nhập:</label>
+            <input type="email" id="email" required placeholder="name@example.com">
         </div>
-    </nav>
 
-    <main class="max-w-4xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-bold text-slate-900 mb-6">Đặt lịch khám chuyên khoa & Thanh toán</h1>
+        <div class="form-group">
+            <label for="password">Mật khẩu:</label>
+            <input type="password" id="password" required placeholder="********">
+        </div>
 
-        <form id="bookingForm" class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Họ và tên bệnh nhân *</label>
-                    <input type="text" id="patientName" required class="w-full border border-slate-300 rounded-xl p-3" placeholder="Nguyễn Văn A">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Số điện thoại liên hệ *</label>
-                    <input type="tel" id="patientPhone" required class="w-full border border-slate-300 rounded-xl p-3" placeholder="0912345678">
-                </div>
-            </div>
+        <button type="submit">Đăng Nhập</button>
+    </form>
+    <a href="/" class="back-link">← Quay về Trang chủ</a>
+</div>
 
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Chọn Bác sĩ / Chuyên gia *</label>
-                    <select id="doctorSelect" onchange="updateDoctorInfo()" class="w-full border border-slate-300 rounded-xl p-3 bg-white"></select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Chuyên khoa & Phí khám</label>
-                    <input type="text" id="deptAndFeeDisplay" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl p-3 font-semibold text-teal-800">
-                </div>
-            </div>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Ngày khám mong muốn *</label>
-                    <input type="date" id="examDate" required class="w-full border border-slate-300 rounded-xl p-3">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2">Khung giờ khám *</label>
-                    <select id="timeSlot" class="w-full border border-slate-300 rounded-xl p-3 bg-white">
-                        <option value="08:00 - 09:00">08:00 - 09:00 (Buổi sáng)</option>
-                        <option value="09:30 - 10:30">09:30 - 10:30 (Buổi sáng)</option>
-                        <option value="14:00 - 15:00">14:00 - 15:00 (Buổi chiều)</option>
-                        <option value="15:30 - 16:30">15:30 - 16:30 (Buổi chiều)</option>
-                    </select>
-                </div>
-            </div>
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-            <div>
-                <label class="block text-sm font-semibold mb-2">Mô tả triệu chứng / Tiền sử bệnh (Không bắt buộc)</label>
-                <textarea id="symptoms" rows="2" class="w-full border border-slate-300 rounded-xl p-3" placeholder="Ví dụ: Đau tức ngực trái khi leo cầu thang..."></textarea>
-            </div>
-
-            <!-- Chọn hình thức thanh toán tương tác trực tiếp -->
-            <div class="pt-4 border-t border-slate-200">
-                <label class="block text-base font-bold mb-3">Chọn hình thức thanh toán *</label>
-                <div class="grid md:grid-cols-3 gap-4" id="paymentMethods">
-                    <button type="button" onclick="selectPayment('CASH', this)" class="pay-btn border-2 border-teal-600 bg-teal-50 p-4 rounded-xl text-left transition">
-                        <div class="font-bold text-teal-900">💵 Tiền mặt tại quầy</div>
-                        <div class="text-xs text-slate-600 mt-1">Thanh toán trực tiếp khi đến làm thủ tục</div>
-                    </button>
-                    <button type="button" onclick="selectPayment('BANK_TRANSFER', this)" class="pay-btn border-2 border-slate-200 hover:border-teal-400 p-4 rounded-xl text-left transition">
-                        <div class="font-bold text-slate-900">🏦 Chuyển khoản QR</div>
-                        <div class="text-xs text-slate-600 mt-1">Quét mã VietQR xác nhận tức thì</div>
-                    </button>
-                    <button type="button" onclick="selectPayment('CARD', this)" class="pay-btn border-2 border-slate-200 hover:border-teal-400 p-4 rounded-xl text-left transition">
-                        <div class="font-bold text-slate-900">💳 Thẻ ATM / Visa</div>
-                        <div class="text-xs text-slate-600 mt-1">Thanh toán qua cổng thẻ nội địa & quốc tế</div>
-                    </button>
-                </div>
-                <input type="hidden" id="selectedPaymentMethod" value="CASH">
-
-                <!-- Khung hiển thị thông tin QR / Thẻ khi người dùng bấm chọn -->
-                <div id="paymentExtraBox" class="hidden mt-4 p-5 bg-amber-50 border border-amber-200 rounded-xl"></div>
-            </div>
-
-            <button type="submit" id="submitBtn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl text-lg shadow-md transition">Xác nhận Đặt lịch & Hoàn tất</button>
-        </form>
-
-        <div id="bookingSuccess" class="hidden mt-6 bg-emerald-50 border border-emerald-300 p-6 rounded-2xl text-emerald-900"></div>
-    </main>
-
-    <script>
-        let doctorsList = [];
-        let selectedDoctor = null;
-
-        // Tự động điền thông tin nếu người dùng đã đăng nhập
-        const user = JSON.parse(localStorage.getItem('lk_user'));
-        if (user && user.role === 'PATIENT') {
-            document.getElementById('patientName').value = user.fullName;
-            document.getElementById('patientPhone').value = user.phone;
-        }
-
-        async function initBooking() {
-            const res = await fetch('/api/doctors');
-            doctorsList = await res.json();
-            const select = document.getElementById('doctorSelect');
-            select.innerHTML = doctorsList.map(d => `<option value="${d.id}">${d.name} (${d.specialty})</option>`).join('');
-
-            const params = new URLSearchParams(window.location.search);
-            const docId = params.get('doctorId');
-            if (docId) select.value = docId;
-
-            document.getElementById('examDate').valueAsDate = new Date();
-            updateDoctorInfo();
-        }
-
-        function updateDoctorInfo() {
-            const id = Number(document.getElementById('doctorSelect').value);
-            selectedDoctor = doctorsList.find(d => d.id === id);
-            if (selectedDoctor) {
-                document.getElementById('deptAndFeeDisplay').value = `${selectedDoctor.specialty} — ${selectedDoctor.fee.toLocaleString('vi-VN')} VNĐ`;
-                selectPayment(document.getElementById('selectedPaymentMethod').value);
-            }
-        }
-
-        function selectPayment(method, btnElement) {
-            document.getElementById('selectedPaymentMethod').value = method;
-            if (btnElement) {
-                document.querySelectorAll('.pay-btn').forEach(b => {
-                    b.classList.remove('border-teal-600', 'bg-teal-50');
-                    b.classList.add('border-slate-200');
-                });
-                btnElement.classList.remove('border-slate-200');
-                btnElement.classList.add('border-teal-600', 'bg-teal-50');
-            }
-
-            const extraBox = document.getElementById('paymentExtraBox');
-            const fee = selectedDoctor ? selectedDoctor.fee : 300000;
-
-            if (method === 'BANK_TRANSFER') {
-                extraBox.classList.remove('hidden');
-                extraBox.innerHTML = `
-                    <div class="flex flex-col md:flex-row items-center gap-6">
-                        <img src="https://img.vietqr.io/image/MB-0987654321-compact2.png?amount=${fee}&addInfo=KHAM%20BENH%20LOC%20KHANG" alt="Mã QR" class="w-40 h-40 rounded-lg border bg-white p-1">
-                        <div>
-                            <p class="font-bold text-amber-900 text-lg">Quét mã VietQR để thanh toán trước</p>
-                            <p class="text-sm text-slate-700 mt-1">Ngân hàng: <b>MB Bank</b> | STK: <b>0987654321</b></p>
-                            <p class="text-sm text-slate-700">Chủ TK: <b>PHONG KHAM DA KHOA LOC KHANG</b></p>
-                            <p class="text-sm text-teal-800 font-bold mt-1">Số tiền: ${fee.toLocaleString('vi-VN')} VNĐ</p>
-                            <p class="text-xs text-slate-500 mt-2">* Sau khi chuyển khoản, bấm nút "Xác nhận Đặt lịch" bên dưới để lấy phiếu khám ưu tiên.</p>
-                        </div>
-                    </div>
-                `;
-            } else if (method === 'CARD') {
-                extraBox.classList.remove('hidden');
-                extraBox.innerHTML = `
-                    <p class="font-bold text-amber-900 mb-3">Nhập thông tin thẻ thanh toán (Mô phỏng cổng thanh toán)</p>
-                    <div class="grid md:grid-cols-2 gap-3">
-                        <input type="text" placeholder="Số thẻ (4111 •••• •••• 1111)" class="border p-2.5 rounded-lg bg-white">
-                        <input type="text" placeholder="Tên in trên thẻ (NGUYEN VAN A)" class="border p-2.5 rounded-lg bg-white">
-                    </div>
-                `;
-            } else {
-                extraBox.classList.add('hidden');
-            }
-        }
-
-        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerText = "Đang xử lý đặt lịch...";
-
-            const payload = {
-                patientName: document.getElementById('patientName').value,
-                patientPhone: document.getElementById('patientPhone').value,
-                department: selectedDoctor.specialty,
-                doctorName: selectedDoctor.name,
-                date: document.getElementById('examDate').value,
-                timeSlot: document.getElementById('timeSlot').value,
-                symptoms: document.getElementById('symptoms').value,
-                fee: selectedDoctor.fee,
-                paymentMethod: document.getElementById('selectedPaymentMethod').value,
-                userId: user ? user.id : null
-            };
-
-            try {
-                const res = await fetch('/api/appointments', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (data.success) {
-                    const box = document.getElementById('bookingSuccess');
-                    box.classList.remove('hidden');
-                    box.innerHTML = `
-                        <h3 class="text-2xl font-bold">✅ Đặt lịch khám thành công!</h3>
-                        <p class="mt-2">Mã phiếu khám của bạn: <span class="bg-emerald-200 px-3 py-1 rounded font-mono font-bold">${data.appointment.bookingCode}</span></p>
-                        <p class="mt-1">Bác sĩ: <b>${data.appointment.doctorName}</b> (${data.appointment.department})</p>
-                        <p class="mt-1">Thời gian: <b>${data.appointment.timeSlot}</b> ngày <b>${data.appointment.date}</b></p>
-                        <p class="mt-1">Trạng thái thanh toán: <b>${data.appointment.paymentStatus === 'PAID' ? 'Đã thanh toán trực tuyến' : 'Thanh toán tiền mặt tại quầy'}</b></p>
-                        <a href="/admin" class="inline-block mt-4 bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold">Xem lịch sử đặt khám &rarr;</a>
-                    `;
-                    document.getElementById('bookingForm').reset();
-                } else {
-                    alert(data.error || "Có lỗi xảy ra!");
-                }
-            } catch (err) {
-                alert("Lỗi kết nối máy chủ!");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Xác nhận Đặt lịch & Hoàn tất";
-            }
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
         });
 
-        initBooking();
-    </script>
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('Đăng nhập thành công!');
+            window.location.href = '/admin'; // Chuyển đến trang quản trị sau khi đăng nhập thành công
+        } else {
+            alert('Đăng nhập thất bại: ' + (data.error || 'Sai thông tin tài khoản'));
+        }
+    } catch (err) {
+        console.error('Lỗi kết nối:', err);
+        alert('Có lỗi xảy ra khi kết nối tới máy chủ.');
+    }
+});
+</script>
+
 </body>
 </html>
