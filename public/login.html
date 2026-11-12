@@ -54,7 +54,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         if (response.ok) {
             alert('Đăng nhập thành công!');
-            window.location.href = '/admin'; // Chuyển đến trang quản trị sau khi đăng nhập thành công
+            window.location.href = '/admin'; // Chuyển đến trang quản trị sau khi đăng nhập
         } else {
             alert('Đăng nhập thất bại: ' + (data.error || 'Sai thông tin tài khoản'));
         }
