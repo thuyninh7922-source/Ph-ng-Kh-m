@@ -3,64 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Nhập - Phòng Khám Lộc Khang</title>
+    <title>Đặt Lịch Khám - Phòng Khám Lộc Khang</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         h2 { color: #007bff; text-align: center; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #218838; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
         .back-link { display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<div class="login-card">
-    <h2>Đăng Nhập Hệ Thống</h2>
-    <form id="loginForm">
+<div class="container">
+    <h2>Đặt Lịch Khám Bệnh</h2>
+    <form id="bookingForm">
         <div class="form-group">
-            <label for="email">Email đăng nhập:</label>
-            <input type="email" id="email" required placeholder="name@example.com">
+            <label for="patientName">Họ và tên bệnh nhân:</label>
+            <input type="text" id="patientName" required placeholder="Nhập họ tên đầy đủ">
         </div>
 
         <div class="form-group">
-            <label for="password">Mật khẩu:</label>
-            <input type="password" id="password" required placeholder="********">
+            <label for="phone">Số điện thoại liên hệ:</label>
+            <input type="tel" id="phone" required placeholder="Nhập số điện thoại">
         </div>
 
-        <button type="submit">Đăng Nhập</button>
+        <div class="form-group">
+            <label for="service">Dịch vụ khám:</label>
+            <select id="service" required>
+                <option value="">-- Chọn dịch vụ --</option>
+                <option value="Khám tổng quát">Khám tổng quát</option>
+                <option value="Khám nội khoa">Khám nội khoa</option>
+                <option value="Khám tim mạch">Khám tim mạch</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="doctor">Bác sĩ khám:</label>
+            <select id="doctor" required>
+                <option value="">-- Chọn bác sĩ --</option>
+                <option value="BS. Nguyễn Văn A">BS. Nguyễn Văn A</option>
+                <option value="BS. Trần Thị B">BS. Trần Thị B</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="appointmentDate">Ngày khám:</label>
+            <input type="date" id="appointmentDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="timeSlot">Khung giờ:</label>
+            <select id="timeSlot" required>
+                <option value="">-- Chọn giờ khám --</option>
+                <option value="08:00 - 09:00">08:00 - 09:00</option>
+                <option value="09:00 - 10:00">09:00 - 10:00</option>
+                <option value="14:00 - 15:00">14:00 - 15:00</option>
+                <option value="15:00 - 16:00">15:00 - 16:00</option>
+            </select>
+        </div>
+
+        <button type="submit">Xác Nhận Đặt Lịch</button>
     </form>
     <a href="/" class="back-link">← Quay về Trang chủ</a>
 </div>
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+    e.preventDefault(); // Chặn hành vi load lại trang mặc định của form
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    // Lấy dữ liệu từ các ô input
+    const patientName = document.getElementById('patientName').value;
+    const phone = document.getElementById('phone').value;
+    const service = document.getElementById('service').value;
+    const doctor = document.getElementById('doctor').value;
+    const appointmentDate = document.getElementById('appointmentDate').value;
+    const timeSlot = document.getElementById('timeSlot').value;
 
     try {
-        const response = await fetch('/api/login', {
+        const response = await fetch('/api/appointments', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ patientName, phone, service, doctor, appointmentDate, timeSlot })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            alert('Đăng nhập thành công!');
-            window.location.href = '/admin'; // Chuyển đến trang quản trị sau khi đăng nhập thành công
+            alert('Đặt lịch thành công! Mã lịch hẹn của bạn là: ' + data.apptCode);
+            document.getElementById('bookingForm').reset(); // Reset form sau khi đặt thành công
         } else {
-            alert('Đăng nhập thất bại: ' + (data.error || 'Sai thông tin tài khoản'));
+            alert('Lỗi: ' + (data.error || 'Không thể đặt lịch'));
         }
     } catch (err) {
         console.error('Lỗi kết nối:', err);
-        alert('Có lỗi xảy ra khi kết nối tới máy chủ.');
+        alert('Không thể kết nối đến máy chủ!');
     }
 });
 </script>
