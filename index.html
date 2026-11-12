@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Y Tế & Phòng Khám VIP Lộc Khang</title>
+    <style>
+        :root { 
+            --primary: #0284c7; 
+            --primary-dark: #0369a1; 
+            --gold: #d97706;
+            --gold-bg: #fffbeb;
+            --success: #16a34a; 
+            --danger: #dc2626; 
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 0; 
+            background-color: var(--bg-body);
+            color: var(--text-main); 
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: #0f172a; color: #94a3b8; padding: 8px 40px; font-size: 13px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .top-bar span { color: #f59e0b; font-weight: 600; }
+
+        header { 
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); 
+            color: white; padding: 18px 40px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); 
+            position: sticky; top: 0; z-index: 100;
+        }
+        
+        header h1 { margin: 0; font-size: 22px; font-weight: 700; }
+        
+        nav button { 
+            background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25); 
+            color: white; font-size: 13px; font-weight: 600; cursor: pointer; 
+            margin-left: 6px; padding: 8px 14px; border-radius: 20px; transition: all 0.3s ease; 
+        }
+        
+        nav button:hover, nav button.active { background: white; color: var(--primary-dark); }
+        nav button.btn-vip-nav { background: #f59e0b; color: white; border: none; }
+        nav button.btn-vip-nav:hover { background: #d97706; }
+
+        .container { 
+            max-width: 1050px; margin: 30px auto; background: #ffffff; 
+            padding: 35px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group.full { grid-column: span 2; }
+        
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #334155; }
+        input, select, textarea { 
+            width: 100%; padding: 11px 13px; border: 1.5px solid #cbd5e1; border-radius: 8px; 
+            box-sizing: border-box; font-size: 14px; background-color: #f8fafc;
+        }
+
+        button.btn-main { 
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); 
+            color: white; padding: 13px; border: none; border-radius: 8px; 
+            cursor: pointer; width: 100%; font-size: 16px; font-weight: 700; 
+        }
+
+        /* Giao diện Thẻ VIP */
+        .vip-card {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #f59e0b; border-radius: 12px; padding: 25px; margin-bottom: 25px;
+        }
+
+        /* Giao diện Căng tin / Đặt đồ ăn */
+        .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
+        .food-item { border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; text-align: center; background: #fff; }
+        .food-item img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+
+        /* Giao diện Đánh giá bệnh nhân */
+        .review-card { background: #f8fafc; border-left: 4px solid var(--primary); padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 12px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
+        th { background-color: #f1f5f9; font-weight: 600; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 35px; border-radius: 16px; text-align: center; max-width: 420px; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div>👑 Đường dây nóng Chăm sóc Khách hàng VIP: <span>1800 9999 (Phục vụ 24/7)</span></div>
+        <div>Cơ sở: Số 1 Lộc Khang, Đống Đa, Hà Nội</div>
+    </div>
+
+    <header>
+        <h1>🏥 Bệnh Viện & Phòng Khám Lộc Khang</h1>
+        <nav>
+            <button onclick="switchTab('home')" class="active" id="nav-home">Đặt lịch thường</button>
+            <button onclick="switchTab('vip')" class="btn-vip-nav" id="nav-vip">⭐ Phòng Khám VIP</button>
+            <button onclick="switchTab('canteen')" id="nav-canteen">🍱 Đặt Đồ Ăn Tại Khám</button>
+            <button onclick="switchTab('reviews')" id="nav-reviews">💬 Đánh Giá (Reviews)</button>
+            <button onclick="switchTab('lookup')" id="nav-lookup">🔍 Tra cứu</button>
+            <button onclick="switchTab('admin')" id="nav-admin">🔐 Quản trị</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <!-- TAB 1: ĐẶT LỊCH THƯỜNG -->
+        <div id="home" class="tab-content active">
+            <h2 style="color: var(--primary-dark); margin-top: 0;">Đăng Ký Khám Bệnh Trực Tuyến</h2>
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event, 'Thường')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Họ và tên bệnh nhân (*):</label>
+                        <input type="text" id="patientName" required placeholder="Nhập họ tên...">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại (*):</label>
+                        <input type="tel" id="patientPhone" required placeholder="Nhập số điện thoại...">
+                    </div>
+                    <div class="form-group">
+                        <label>Chuyên khoa khám:</label>
+                        <select id="serviceSelect">
+                            <option value="Khám tổng quát">Khám tổng quát</option>
+                            <option value="Nội khoa - Tim mạch">Nội khoa - Tim mạch</option>
+                            <option value="Nhi khoa">Nhi khoa</option>
+                            <option value="Tai Mũi Họng">Tai Mũi Họng</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Bác sĩ điều trị:</label>
+                        <select id="doctorSelect">
+                            <option value="BS. CKII Nguyễn Văn Lộc">BS. CKII Nguyễn Văn Lộc</option>
+                            <option value="ThS.BS Trần Thị Khang">ThS.BS Trần Thị Khang</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày khám dự kiến:</label>
+                        <input type="date" id="appointmentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Khung giờ khám:</label>
+                        <select id="timeSlot">
+                            <option value="08:00 - 09:00">08:00 - 09:00 (Sáng)</option>
+                            <option value="14:00 - 15:00">14:00 - 15:00 (Chiều)</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Phương thức thanh toán:</label>
+                        <select id="paymentMethod">
+                            <option value="Chuyển khoản QR">Chuyển khoản trực tuyến QR</option>
+                            <option value="Thanh toán tại quầy">Thanh toán tại quầy</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-main">Xác Nhận Đặt Lịch Khám</button>
+            </form>
+        </div>
+
+        <!-- TAB 2: KHU VỰC PHÒNG KHÁM VIP & CHĂM SÓC ĐẶC BIỆT -->
+        <div id="vip" class="tab-content">
+            <div class="vip-card">
+                <h2 style="color: var(--gold); margin-top: 0;">👑 Đăng Ký Gói Khám VIP / Chăm Sóc Đặc Biệt</h2>
+                <p style="color: #b45309; font-size: 14px;"><b>Đặc quyền VIP:</b> Không cần xếp hàng chờ đợi, có Y sĩ riêng đưa đón tận nơi, phòng chờ hạng thương gia có nước uống & đồ ăn nhẹ miễn phí, khám trực tiếp với Giáo sư / Trưởng khoa.</p>
+            </div>
+            <form onsubmit="handleBookingSubmit(event, 'VIP Gold')">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Họ tên bệnh nhân VIP:</label>
+                        <input type="text" id="vipName" required placeholder="Nhập họ tên...">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại VIP:</label>
+                        <input type="tel" id="vipPhone" required placeholder="Nhập số điện thoại...">
+                    </div>
+                    <div class="form-group full">
+                        <label>Chọn Gói Khám VIP:</label>
+                        <select id="vipPackage">
+                            <option value="Gói VIP Diamond - Chăm sóc tận nhà & Khám ưu tiên (2.500.000 VNĐ)">Gói VIP Diamond - Chăm sóc tận nhà & Khám ưu tiên (2.500.000 VNĐ)</option>
+                            <option value="Gói VIP Gold - Phòng chờ hạng Thương gia & Trưởng khoa khám (1.200.000 VNĐ)">Gói VIP Gold - Phòng chờ Thương gia & Trưởng khoa khám (1.200.000 VNĐ)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày khám ưu tiên:</label>
+                        <input type="date" id="vipDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Yêu cầu đặc biệt (Lái xe đưa đón, xe đẩy, y tá riêng...):</label>
+                        <input type="text" id="vipNote" placeholder="Ví dụ: Cần xe đẩy hỗ trợ người già...">
+                    </div>
+                </div>
+                <button type="submit" class="btn-main" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%);">Đăng Ký Khám VIP Ngay</button>
+            </form>
+        </div>
+
+        <!-- TAB 3: ĐẶT ĐỒ ĂN & NƯỚC UỐNG TẠI PHÒNG KHÁM (F&B CANTEEN) -->
+        <div id="canteen" class="tab-content">
+            <h2 style="color: var(--primary-dark); margin-top: 0;">🍱 Dịch Vụ Đặt Đồ Ăn & Nước Uống Tại Phòng Chờ</h2>
+            <p style="color: #64748b;">Trong thời gian chờ nhận kết quả xét nghiệm hoặc chờ khám, quý khách có thể gọi món trực tiếp tới ghế ngồi.</p>
+            
+            <div class="food-grid">
+                <div class="food-item">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200" alt="Cơm tấm">
+                    <h4 style="margin: 8px 0 4px 0;">Suất Cơm Dinh Dưỡng</h4>
+                    <p style="color: var(--primary-dark); font-weight: bold; margin: 0 0 8px 0;">55.000 VNĐ</p>
+                    <button onclick="orderFood('Suất Cơm Dinh Dưỡng')" style="background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Đặt món này</button>
+                </div>
+                <div class="food-item">
+                    <img src="https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=200" alt="Nước ép">
+                    <h4 style="margin: 8px 0 4px 0;">Nước Ép Trái Cây Tươi</h4>
+                    <p style="color: var(--primary-dark); font-weight: bold; margin: 0 0 8px 0;">35.000 VNĐ</p>
+                    <button onclick="orderFood('Nước Ép Trái Cây Tươi')" style="background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Đặt món này</button>
+                </div>
+                <div class="food-item">
+                    <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?w=200" alt="Bánh mì">
+                    <h4 style="margin: 8px 0 4px 0;">Bánh Mì Kẹp Y Tế nhẹ</h4>
+                    <p style="color: var(--primary-dark); font-weight: bold; margin: 0 0 8px 0;">30.000 VNĐ</p>
+                    <button onclick="orderFood('Bánh Mì Kẹp Y Tế')" style="background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Đặt món này</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ĐÁNH GIÁ CỦA BỆNH NHÂN (REVIEWS) -->
+        <div id="reviews" class="tab-content">
+            <h2 style="color: var(--primary-dark); margin-top: 0;">💬 Đánh Giá & Phản Hồi Từ Bệnh Nhân</h2>
+            
+            <div id="reviewsList">
+                <div class="review-card">
+                    <div style="display: flex; justify-content: space-between;">
+                        <b>Bệnh nhân: Nguyễn Thị Dung</b>
+                        <span style="color: #f59e0b;">⭐⭐⭐⭐⭐ (5/5)</span>
+                    </div>
+                    <p style="margin: 6px 0 0 0; color: #475569; font-size: 14px;">"Dịch vụ phòng khám VIP tuyệt vời, bác sĩ Lộc khám rất kỹ và nhẹ nhàng. Đồ ăn phục vụ tận phòng chờ rất tiện cho người già."</p>
+                </div>
+                <div class="review-card">
+                    <div style="display: flex; justify-content: space-between;">
+                        <b>Bệnh nhân: Phạm Quốc Anh</b>
+                        <span style="color: #f59e0b;">⭐⭐⭐⭐⭐ (5/5)</span>
+                    </div>
+                    <p style="margin: 6px 0 0 0; color: #475569; font-size: 14px;">"Đặt lịch qua mạng tiện lợi, đúng giờ là vào khám không phải đợi mệt mỏi như các bệnh viện khác."</p>
+                </div>
+            </div>
+
+            <hr style="margin: 25px 0;">
+            <h3>Gửi Đánh Giá Của Bạn</h3>
+            <form onsubmit="handleSendReview(event)">
+                <div class="form-group">
+                    <label>Họ tên của bạn:</label>
+                    <input type="text" id="revName" required placeholder="Nhập tên...">
+                </div>
+                <div class="form-group">
+                    <label>Nội dung nhận xét dịch vụ:</label>
+                    <textarea id="revContent" rows="3" required placeholder="Chia sẻ trải nghiệm của bạn về phòng khám..."></textarea>
+                </div>
+                <button type="submit" class="btn-main" style="width: auto; padding: 10px 25px;">Gửi Đánh Giá</button>
+            </form>
+        </div>
+
+        <!-- TAB 5: TRA CỨU -->
+        <div id="lookup" class="tab-content">
+            <h2 style="color: var(--primary-dark); margin-top: 0;">Tra Cứu Lịch Hẹn</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="lookupPhone" placeholder="Nhập số điện thoại...">
+                <button onclick="searchAppointments()" style="width: 140px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Tra cứu</button>
+            </div>
+            <div id="lookupResult"></div>
+        </div>
+
+        <!-- TAB 6: QUẢN TRỊ -->
+        <div id="admin" class="tab-content">
+            <div id="loginBox">
+                <h3>Đăng Nhập Quản Trị Viên</h3>
+                <p>Tài khoản: <b>nhanvien</b> / <b>123456</b></p>
+                <div class="form-group"><input type="text" id="adminUser" placeholder="Tài khoản..."></div>
+                <div class="form-group"><input type="password" id="adminPass" placeholder="Mật khẩu..."></div>
+                <button onclick="handleLogin()" class="btn-main" style="background: var(--success);">Đăng nhập</button>
+            </div>
+            <div id="dashboardBox" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Danh Sách Lịch Hẹn</h3>
+                    <button onclick="handleLogout()" style="background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">Đăng xuất</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr><th>Mã lịch</th><th>Bệnh nhân</th><th>Số điện thoại</th><th>Dịch vụ/Bác sĩ</th><th>Thời gian</th><th>Thao tác</th></tr>
+                    </thead>
+                    <tbody id="appointmentTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL THANH TOÁN -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--primary-dark); margin-top: 0;">Thanh Toán Trực Tuyến</h3>
+            <div style="background: #f0f9ff; border: 2px dashed var(--primary); padding: 20px; border-radius: 12px; margin: 15px 0;">
+                [ MÃ QR CODE VNPAY / MOMO ]<br><b>Nội dung: <span id="qrContentText"></span></b>
+            </div>
+            <button onclick="confirmBooking()" class="btn-main" style="background: var(--success);">Tôi Đã Chuyển Khoản</button>
+            <button onclick="closeModal()" style="background: none; border: none; color: var(--danger); margin-top: 10px; cursor: pointer; font-weight: 600;">Hủy</button>
+        </div>
+    </div>
+
+    <script>
+        let currentBookingData = null;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active');
+            if(tabId === 'admin' && document.getElementById('dashboardBox').style.display === 'block') loadAdminAppointments();
+        }
+
+        async function handleBookingSubmit(e, type) {
+            e.preventDefault();
+            if(type === 'VIP Gold') {
+                currentBookingData = {
+                    patientName: document.getElementById('vipName').value + ' [VIP]',
+                    phone: document.getElementById('vipPhone').value,
+                    service: document.getElementById('vipPackage').value,
+                    doctor: 'Trưởng khoa VIP',
+                    appointmentDate: document.getElementById('vipDate').value,
+                    timeSlot: 'Ưu tiên đặc biệt',
+                    paymentMethod: 'Chuyển khoản QR VIP'
+                };
+            } else {
+                currentBookingData = {
+                    patientName: document.getElementById('patientName').value,
+                    phone: document.getElementById('patientPhone').value,
+                    service: document.getElementById('serviceSelect').value,
+                    doctor: document.getElementById('doctorSelect').value,
+                    appointmentDate: document.getElementById('appointmentDate').value,
+                    timeSlot: document.getElementById('timeSlot').value,
+                    paymentMethod: document.getElementById('paymentMethod').value
+                };
+            }
+
+            if(currentBookingData.paymentMethod.includes('QR')) {
+                document.getElementById('qrContentText').innerText = `LK ${currentBookingData.phone}`;
+                document.getElementById('paymentModal').style.display = 'flex';
+            } else {
+                await confirmBooking();
+            }
+        }
+
+        function closeModal() { document.getElementById('paymentModal').style.display = 'none'; }
+
+        async function confirmBooking() {
+            try {
+                const res = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentBookingData)
+                });
+                const result = await res.json();
+                if(result.success) {
+                    closeModal();
+                    alert(`🎉 Đặt lịch khám thành công!\nMã lịch hẹn: ${result.data.code}`);
+                    switchTab('lookup');
+                    document.getElementById('lookupPhone').value = currentBookingData.phone;
+                    searchAppointments();
+                }
+            } catch (err) { alert('Không thể kết nối máy chủ!'); }
+        }
+
+        function orderFood(foodName) {
+            alert(`🍔 Đã nhận đơn đặt món: "${foodName}"!\nNhân viên căn tin sẽ mang đến tận phòng chờ cho bạn trong 10 phút.`);
+        }
+
+        function handleSendReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('revName').value;
+            const content = document.getElementById('revContent').value;
+            const html = `<div class="review-card"><div style="display: flex; justify-content: space-between;"><b>Bệnh nhân: ${name}</b><span style="color: #f59e0b;">⭐⭐⭐⭐⭐ (5/5)</span></div><p style="margin: 6px 0 0 0; color: #475569; font-size: 14px;">"${content}"</p></div>`;
+            document.getElementById('reviewsList').insertAdjacentHTML('afterbegin', html);
+            alert('Cảm ơn bạn đã gửi đánh giá phản hồi!');
+            e.target.reset();
+        }
+
+        async function searchAppointments() {
+            const phone = document.getElementById('lookupPhone').value.trim();
+            const resultBox = document.getElementById('lookupResult');
+            if(!phone) return;
+            const res = await fetch(`/api/appointments/search?phone=${phone}`);
+            const result = await res.json();
+            if(result.success && result.data.length > 0) {
+                let html = `<table><tr><th>Mã lịch</th><th>Bệnh nhân</th><th>Dịch vụ & Bác sĩ</th><th>Thời gian</th><th>Trạng thái</th></tr>`;
+                result.data.forEach(item => {
+                    html += `<tr><td><b>${item.code}</b></td><td>${item.patientName}</td><td>${item.service}<br><small>${item.doctor}</small></td><td>${item.timeSlot} (${item.appointmentDate})</td><td><span style="color: green; font-weight: bold;">${item.status}</span></td></tr>`;
+                });
+                resultBox.innerHTML = html + `</table>`;
+            } else { resultBox.innerHTML = '<p>Không tìm thấy lịch hẹn.</p>'; }
+        }
+
+        function handleLogin() {
+            if(document.getElementById('adminUser').value === 'nhanvien' && document.getElementById('adminPass').value === '123456') {
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('dashboardBox').style.display = 'block';
+                loadAdminAppointments();
+            } else { alert('Sai tài khoản hoặc mật khẩu!'); }
+        }
+
+        function handleLogout() {
+            document.getElementById('dashboardBox').style.display = 'none';
+            document.getElementById('loginBox').style.display = 'block';
+        }
+
+        async function loadAdminAppointments() {
+            const tbody = document.getElementById('appointmentTableBody');
+            const res = await fetch('/api/admin/appointments');
+            const result = await res.json();
+            if(result.success) {
+                let html = '';
+                result.data.forEach(item => {
+                    html += `<tr><td><b>${item.code}</b></td><td>${item.patientName}</td><td>${item.phone}</td><td>${item.doctor}<br><small>${item.service}</small></td><td>${item.timeSlot} (${item.appointmentDate})</td><td><button onclick="deleteAppointment(${item.id})" style="background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Hủy</button></td></tr>`;
+                });
+                tbody.innerHTML = html;
+            }
+        }
+
+        async function deleteAppointment(id) {
+            if(confirm('Hủy lịch này?')) {
+                await fetch(`/api/admin/appointments/${id}`, { method: 'DELETE' });
+                loadAdminAppointments();
+            }
+        }
+    </script>
+</body>
+</html>
