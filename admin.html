@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Lịch hẹn - Lộc Khang Clinic</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏥</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 text-2xl font-bold text-teal-700"><span>🏥</span> <span>Lộc Khang Clinic</span></a>
+            <div class="flex items-center gap-6 font-medium">
+                <a href="/" class="text-slate-600 hover:text-teal-700">Trang chủ</a>
+                <a href="/booking" class="bg-teal-600 text-white px-4 py-2 rounded-lg">Đặt lịch mới</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-10">
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+            <div>
+                <h1 id="pageTitle" class="text-3xl font-bold text-slate-900">Tra cứu Lịch hẹn Khám bệnh</h1>
+                <p id="pageSub" class="text-slate-500">Nhập số điện thoại để xem lịch khám của bạn hoặc đăng nhập quyền Quản trị</p>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="phoneLookup" placeholder="Nhập SĐT tra cứu..." class="border border-slate-300 rounded-xl px-4 py-2 bg-white">
+                <button onclick="loadAppointments()" class="bg-slate-800 text-white px-5 py-2 rounded-xl font-semibold">Tra cứu</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-100 text-slate-700 text-sm uppercase">
+                    <tr>
+                        <th class="p-4">Mã phiếu</th>
+                        <th class="p-4">Bệnh nhân</th>
+                        <th class="p-4">Bác sĩ & Chuyên khoa</th>
+                        <th class="p-4">Ngày & Giờ khám</th>
+                        <th class="p-4">Phí khám</th>
+                        <th class="p-4">Thanh toán</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentsBody" class="divide-y divide-slate-200 text-sm"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('lk_user'));
+        if (user) {
+            if (user.role === 'ADMIN') {
+                document.getElementById('pageTitle').innerText = "Bảng điều khiển Quản trị Phòng khám (Toàn bộ lịch hẹn)";
+            } else {
+                document.getElementById('phoneLookup').value = user.phone;
+            }
+        }
+
+        async function loadAppointments() {
+            const phone = document.getElementById('phoneLookup').value.trim();
+            const url = (user && user.role === 'ADMIN' && !phone) ? '/api/appointments' : `/api/appointments?phone=${encodeURIComponent(phone)}`;
+            const res = await fetch(url);
+            const list = await res.json();
+
+            document.getElementById('appointmentsBody').innerHTML = list.length === 0
+                ? `<tr><td colspan="6" class="p-8 text-center text-slate-400">Chưa tìm thấy lịch hẹn nào.</td></tr>`
+                : list.map(a => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-4 font-mono font-bold text-teal-700">${a.bookingCode}</td>
+                        <td class="p-4"><b>${a.patientName}</b><br><span class="text-slate-500">${a.patientPhone}</span></td>
+                        <td class="p-4"><b>${a.doctorName}</b><br><span class="text-teal-700">${a.department}</span></td>
+                        <td class="p-4"><b>${a.date}</b><br><span class="text-slate-500">${a.timeSlot}</span></td>
+                        <td class="p-4 font-semibold">${a.fee.toLocaleString('vi-VN')}đ</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${a.paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                ${a.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Tiền mặt tại quầy'}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+        }
+        loadAppointments();
+    </script>
+</body>
+</html>

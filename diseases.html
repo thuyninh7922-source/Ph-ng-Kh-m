@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra cứu Bệnh lý & Triệu chứng - Lộc Khang Clinic</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏥</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 text-2xl font-bold text-teal-700"><span>🏥</span> <span>Lộc Khang Clinic</span></a>
+            <div class="hidden md:flex items-center space-x-8 font-medium">
+                <a href="/" class="text-slate-600 hover:text-teal-700">Trang chủ</a>
+                <a href="/doctors" class="text-slate-600 hover:text-teal-700">Đội ngũ Giáo sư - Bác sĩ</a>
+                <a href="/diseases" class="text-teal-700 border-b-2 border-teal-700 pb-1">Tra cứu Bệnh lý</a>
+                <a href="/booking" class="text-slate-600 hover:text-teal-700">Đặt lịch khám</a>
+            </div>
+            <a href="/booking" class="bg-teal-600 text-white px-4 py-2 rounded-lg font-medium">Đặt lịch ngay</a>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 py-10">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">Cẩm nang Tra cứu Bệnh lý & Triệu chứng</h1>
+        <p class="text-slate-500 mb-6">Nhập tên bệnh hoặc triệu chứng (ví dụ: đau đầu, dạ dày, huyết áp, trẻ sốt...) để tìm chuyên khoa phù hợp</p>
+
+        <input type="text" id="searchDisease" oninput="filterDiseases()" placeholder="🔍 Nhập triệu chứng hoặc tên bệnh cần tra cứu..." class="w-full p-4 rounded-2xl border border-slate-300 shadow-sm mb-8 text-lg">
+
+        <div id="diseasesList" class="space-y-4"></div>
+    </main>
+
+    <script>
+        let diseases = [];
+        async function loadDiseases() {
+            const res = await fetch('/api/diseases');
+            diseases = await res.json();
+            filterDiseases();
+        }
+        function filterDiseases() {
+            const kw = document.getElementById('searchDisease').value.toLowerCase();
+            const filtered = diseases.filter(d => d.name.toLowerCase().includes(kw) || d.symptoms.toLowerCase().includes(kw) || d.specialty.toLowerCase().includes(kw));
+            document.getElementById('diseasesList').innerHTML = filtered.map(d => `
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
+                        <h3 class="text-xl font-bold text-teal-800">${d.name}</h3>
+                        <span class="bg-red-50 text-red-700 text-xs font-bold px-3 py-1 rounded-full">Mức độ cảnh báo: ${d.danger}</span>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-1">Chuyên khoa phụ trách: <b class="text-slate-800">${d.specialty}</b></p>
+                    <p class="mt-3 text-slate-700"><b>Triệu chứng điển hình:</b> ${d.symptoms}</p>
+                    <p class="mt-2 text-slate-700"><b>Khuyến nghị y khoa:</b> ${d.advice}</p>
+                    <div class="mt-4">
+                        <a href="/doctors?specialty=${encodeURIComponent(d.specialty)}" class="inline-block bg-teal-50 hover:bg-teal-100 text-teal-800 font-semibold px-4 py-2 rounded-lg text-sm transition">Chọn bác sĩ khoa ${d.specialty} &rarr;</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        loadDiseases();
+    </script>
+</body>
+</html>

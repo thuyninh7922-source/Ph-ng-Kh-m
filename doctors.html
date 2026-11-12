@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đội ngũ Giáo sư, Tiến sĩ, Bác sĩ - Lộc Khang Clinic</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏥</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 text-2xl font-bold text-teal-700"><span>🏥</span> <span>Lộc Khang Clinic</span></a>
+            <div class="hidden md:flex items-center space-x-8 font-medium">
+                <a href="/" class="text-slate-600 hover:text-teal-700">Trang chủ</a>
+                <a href="/doctors" class="text-teal-700 border-b-2 border-teal-700 pb-1">Đội ngũ Giáo sư - Bác sĩ</a>
+                <a href="/diseases" class="text-slate-600 hover:text-teal-700">Tra cứu Bệnh lý</a>
+                <a href="/booking" class="text-slate-600 hover:text-teal-700">Đặt lịch khám</a>
+            </div>
+            <a href="/admin" class="text-sm font-semibold text-teal-700 hover:underline">Lịch hẹn của tôi</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900">Đội ngũ Chuyên gia & Bác sĩ</h1>
+                <p class="text-slate-500">Lọc theo chuyên khoa hoặc học hàm Giáo sư, Phó Giáo sư, Tiến sĩ</p>
+            </div>
+            <select id="specialtyFilter" onchange="renderDoctors()" class="border border-slate-300 rounded-xl px-4 py-2.5 bg-white font-medium shadow-sm">
+                <option value="ALL">Tất cả chuyên khoa</option>
+                <option value="Tim mạch">Tim mạch</option>
+                <option value="Nội Thần kinh">Nội Thần kinh</option>
+                <option value="Tiêu hóa - Gan mật">Tiêu hóa - Gan mật</option>
+                <option value="Nhi khoa">Nhi khoa</option>
+                <option value="Cơ Xương Khớp">Cơ Xương Khớp</option>
+                <option value="Da liễu & Thẩm mỹ">Da liễu & Thẩm mỹ</option>
+            </select>
+        </div>
+
+        <div id="doctorsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </main>
+
+    <script>
+        let allDoctors = [];
+        async function loadDoctors() {
+            const res = await fetch('/api/doctors');
+            allDoctors = await res.json();
+            const params = new URLSearchParams(window.location.search);
+            const spec = params.get('specialty');
+            if (spec) document.getElementById('specialtyFilter').value = spec;
+            renderDoctors();
+        }
+
+        function renderDoctors() {
+            const filter = document.getElementById('specialtyFilter').value;
+            const list = filter === 'ALL' ? allDoctors : allDoctors.filter(d => d.specialty === filter);
+            document.getElementById('doctorsGrid').innerHTML = list.map(doc => `
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <img src="${doc.avatar}" alt="${doc.name}" class="w-full h-56 object-cover">
+                        <div class="p-6">
+                            <span class="bg-teal-50 text-teal-700 text-xs font-bold px-3 py-1 rounded-full border border-teal-200">${doc.specialty}</span>
+                            <h3 class="text-xl font-bold mt-3 text-slate-900">${doc.name}</h3>
+                            <p class="text-amber-700 font-semibold text-sm mt-1">${doc.title}</p>
+                            <p class="text-slate-600 text-sm mt-2">${doc.hospital}</p>
+                            <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between text-sm">
+                                <span class="text-slate-500">Kinh nghiệm: <b>${doc.exp}</b></span>
+                                <span class="text-teal-700 font-bold">${doc.fee.toLocaleString('vi-VN')}đ / lượt</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <a href="/booking?doctorId=${doc.id}" class="block text-center bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl transition">Đặt lịch với bác sĩ này</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        loadDoctors();
+    </script>
+</body>
+</html>
