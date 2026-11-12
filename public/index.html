@@ -3,104 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phòng Khám Đa Khoa Quốc Tế Lộc Khang</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏥</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 text-slate-800 font-sans">
-    <!-- Navbar dùng chung cho toàn bộ Multi-page -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2 text-2xl font-bold text-teal-700">
-                <span>🏥</span> <span>Lộc Khang Clinic</span>
-            </a>
-            <div class="hidden md:flex items-center space-x-8 font-medium">
-                <a href="/" class="text-teal-700 border-b-2 border-teal-700 pb-1">Trang chủ</a>
-                <a href="/doctors" class="text-slate-600 hover:text-teal-700">Đội ngũ Giáo sư - Bác sĩ</a>
-                <a href="/diseases" class="text-slate-600 hover:text-teal-700">Tra cứu Bệnh lý</a>
-                <a href="/booking" class="text-slate-600 hover:text-teal-700">Đặt lịch khám</a>
-            </div>
-            <div id="authSection" class="flex items-center gap-3">
-                <a href="/login" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition">Đăng nhập / Đăng ký</a>
-            </div>
-        </div>
-    </nav>
+    <title>Phòng Khám Đa Khoa Lộc Khang</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; line-height: 1.6; }
+        
+        /* Header & Navigation */
+        header { background: #007bff; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .logo { font-size: 24px; font-weight: bold; }
+        nav a { color: white; text-decoration: none; margin-left: 20px; font-weight: 500; transition: color 0.3s; }
+        nav a:hover { color: #d1ecf1; }
+        
+        /* Hero Section */
+        .hero { background: linear-gradient(rgba(0,123,255,0.8), rgba(0,123,255,0.8)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover; color: white; text-align: center; padding: 100px 20px; }
+        .hero h1 { font-size: 40px; margin-bottom: 20px; }
+        .hero p { font-size: 18px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .btn-booking { background-color: #28a745; color: white; padding: 14px 30px; font-size: 18px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; transition: background 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .btn-booking:hover { background-color: #218838; }
 
-    <!-- Hero Banner -->
-    <header class="bg-gradient-to-r from-teal-800 to-emerald-700 text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
-            <div>
-                <span class="bg-teal-600/50 border border-teal-400 text-sm px-3 py-1 rounded-full">Hệ thống Y tế Chuyên sâu Đa chuyên khoa</span>
-                <h1 class="text-4xl md:text-5xl font-extrabold mt-4 leading-tight">Chăm sóc sức khỏe toàn diện cùng đội ngũ Giáo sư, Tiến sĩ đầu ngành</h1>
-                <p class="mt-4 text-teal-100 text-lg">Đặt lịch khám trực tuyến nhanh chóng, chọn đúng chuyên gia, thanh toán linh hoạt và quản lý hồ sơ bệnh án mọi lúc mọi nơi.</p>
-                <div class="mt-8 flex flex-wrap gap-4">
-                    <a href="/booking" class="bg-white text-teal-800 hover:bg-teal-50 px-6 py-3.5 rounded-xl font-bold shadow-lg transition">Đặt lịch khám ngay &rarr;</a>
-                    <a href="/doctors" class="border border-white/60 hover:bg-white/10 text-white px-6 py-3.5 rounded-xl font-semibold transition">Xem danh sách Bác sĩ</a>
-                </div>
-            </div>
-            <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
-                <h3 class="text-xl font-bold mb-4">Thống kê năng lực chuyên môn</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/10 p-4 rounded-xl"><p class="text-3xl font-extrabold">25+</p><p class="text-sm text-teal-100">Giáo sư, PGS, Tiến sĩ</p></div>
-                    <div class="bg-white/10 p-4 rounded-xl"><p class="text-3xl font-extrabold">14</p><p class="text-sm text-teal-100">Chuyên khoa sâu</p></div>
-                    <div class="bg-white/10 p-4 rounded-xl"><p class="text-3xl font-extrabold">24/7</p><p class="text-sm text-teal-100">Cấp cứu & Tư vấn</p></div>
-                    <div class="bg-white/10 p-4 rounded-xl"><p class="text-3xl font-extrabold">99.4%</p><p class="text-sm text-teal-100">Bệnh nhân hài lòng</p></div>
-                </div>
-            </div>
-        </div>
+        /* Services / Features */
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .section-title { text-align: center; margin-bottom: 30px; color: #007bff; font-size: 28px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
+        .card h3 { color: #007bff; margin-bottom: 15px; }
+        
+        /* Footer */
+        footer { background: #343a40; color: white; text-align: center; padding: 20px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <!-- Thanh điều hướng đầu trang -->
+    <header>
+        <div class="logo">🏥 Phòng Khám Lộc Khang</div>
+        <nav>
+            <a href="/">Trang chủ</a>
+            <a href="/doctors">Đội ngũ bác sĩ</a>
+            <a href="/diseases">Danh mục bệnh lý</a>
+            <a href="/booking" style="background: #28a745; padding: 8px 15px; border-radius: 4px;">Đặt lịch khám</a>
+            <a href="/login">Đăng nhập Admin</a>
+        </nav>
     </header>
 
-    <!-- Các chuyên khoa mũi nhọn -->
-    <section class="max-w-7xl mx-auto px-4 py-16">
-        <div class="flex justify-between items-end mb-8">
-            <div>
-                <h2 class="text-3xl font-bold text-slate-900">Chuyên khoa khám chữa bệnh</h2>
-                <p class="text-slate-500 mt-1">Bấm vào từng chuyên khoa để chọn bác sĩ và đặt lịch trực tiếp</p>
-            </div>
-            <a href="/doctors" class="text-teal-700 font-semibold hover:underline">Xem tất cả bác sĩ &rarr;</a>
-        </div>
-        <div class="grid md:grid-cols-3 gap-6">
-            <a href="/doctors?specialty=Tim mạch" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-teal-500 hover:shadow-md transition">
-                <div class="text-3xl mb-3">🫀</div>
-                <h3 class="text-xl font-bold">Chuyên khoa Tim mạch</h3>
-                <p class="text-slate-600 text-sm mt-2">Siêu âm Doppler tim, điện tâm đồ gắng sức, điều trị tăng huyết áp, suy tim và bệnh mạch vành.</p>
-            </a>
-            <a href="/doctors?specialty=Nội Thần kinh" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-teal-500 hover:shadow-md transition">
-                <div class="text-3xl mb-3">🧠</div>
-                <h3 class="text-xl font-bold">Nội Thần kinh & Đột quỵ</h3>
-                <p class="text-slate-600 text-sm mt-2">Chẩn đoán đau đầu Migraine, rối loạn tiền đình, mất ngủ mãn tính, tầm soát nguy cơ đột quỵ.</p>
-            </a>
-            <a href="/doctors?specialty=Tiêu hóa - Gan mật" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-teal-500 hover:shadow-md transition">
-                <div class="text-3xl mb-3">🩺</div>
-                <h3 class="text-xl font-bold">Tiêu hóa - Gan mật</h3>
-                <p class="text-slate-600 text-sm mt-2">Nội soi dạ dày - đại tràng không đau công nghệ NBI, điều trị viêm gan B, C và trào ngược.</p>
-            </a>
-            <a href="/doctors?specialty=Nhi khoa" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-teal-500 hover:shadow-md transition">
-                <div class="text-3xl mb-3">👶</div>
-                <h3 class="text-xl font-bold">Nhi khoa Quốc tế</h3>
-                <p class="text-slate-600 text-sm mt-2">Khám hô hấp, tiêu hóa, tư vấn dinh dưỡng và tiêm chủng toàn diện cho trẻ sơ sinh đến 16 tuổi.</p>
-            </a>
-            <a href="/doctors?specialty=Cơ Xương Khớp" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-teal-500 hover:shadow-md transition">
-                <div class="text-3xl mb-3">🦴</div>
-                <h3 class="text-xl font-bold">Cơ Xương Khớp</h3>
-                <p class="text-slate-600 text-sm mt-2">Điều trị thoát vị đĩa đệm, thoái hóa khớp gối, gout và phục hồi chức năng sau chấn thương.</p>
-            </a>
-            <a href="/doctors?specialty=Da liễu & Thẩm mỹ" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-teal-500 hover:shadow-md transition">
-                <div class="text-3xl mb-3">✨</div>
-                <h3 class="text-xl font-bold">Da liễu & Laser Thẩm mỹ</h3>
-                <p class="text-slate-600 text-sm mt-2">Điều trị viêm da cơ địa, vảy nến, nấm da và trẻ hóa da công nghệ cao chuẩn y khoa.</p>
-            </a>
-        </div>
-    </section>
+    <!-- Khu vực Banner chính -->
+    <div class="hero">
+        <h1>Chăm Sức Khỏe Toàn Diện Cho Gia Đình Bạn</h1>
+        <p>Hệ thống y tế chất lượng cao với đội ngũ bác sĩ chuyên khoa giàu kinh nghiệm và trang thiết bị hiện đại.</p>
+        <!-- Nút bấm quan trọng trỏ đúng đến /booking -->
+        <a href="/booking" class="btn-booking">📅 Đặt Lịch Khám Ngay</a>
+    </div>
 
-    <script>
-        const currentUser = JSON.parse(localStorage.getItem('lk_user'));
-        if (currentUser) {
-            document.getElementById('authSection').innerHTML = `
-                <a href="/admin" class="text-sm font-semibold text-teal-800 bg-teal-50 px-3 py-2 rounded-lg border border-teal-200">👤 ${currentUser.fullName}</a>
-                <button onclick="localStorage.removeItem('lk_user'); location.reload();" class="text-sm text-red-600 hover:underline">Thoát</button>
-            `;
-        }
-    </script>
+    <!-- Phần giới thiệu dịch vụ -->
+    <div class="container">
+        <h2 class="section-title">Dịch Vụ Nổi Bật</h2>
+        <div class="features">
+            <div class="card">
+                <h3>Khám Tổng Quát</h3>
+                <p>Tầm soát sức khỏe định kỳ giúp phát hiện sớm các nguy cơ bệnh lý để có hướng điều trị kịp thời.</p>
+            </div>
+            <div class="card">
+                <h3>Khám Nội Khoa</h3>
+                <p>Chẩn đoán và điều trị chuyên sâu các bệnh lý nội tiết, tiêu hóa, hô hấp và tim mạch.</p>
+            </div>
+            <div class="card">
+                <h3>Đặt Lịch Nhanh Chóng</h3>
+                <p>Chủ động chọn giờ khám, lựa chọn bác sĩ theo yêu cầu mà không phải chờ đợi lâu.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chân trang -->
+    <footer>
+        <p>&copy; 2026 Phòng Khám Đa Khoa Lộc Khang. Bản quyền thuộc về hệ thống.</p>
+    </footer>
+
 </body>
 </html>
